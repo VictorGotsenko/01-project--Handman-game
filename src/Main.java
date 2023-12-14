@@ -3,7 +3,16 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Created by Me on 12.12.2023.
+ * -= java-backend-learning-course =- (с) Sergey Zhukov
+ *https://zhukovsd.github.io/java-backend-learning-course/
+ *
+ * Project 01 game Handman
+ * written in procedural style
+ *
+ * Проект 01  игра Виселица
+ * написан в процедурном стиле
+ *
+ * Created by VictorGotsenko on 12.12.2023.
  */
 public class Main {
     private static Scanner cReadFromKeyboard = new Scanner(System.in);
@@ -12,39 +21,25 @@ public class Main {
         boolean isWin = false;
         System.out.println(" Добро пожаловать в игру Виселица");
         while (inviteGame()) {
-            isWin = false;
-            //     System.out.println("Hello!");
             wordsDictionary4game = readWordsFromFile();
             String strGuessWord = guessTheWord(wordsDictionary4game);        // Загаданное слово...
-            //System.out.println(strGuessWord);
-            // printHangman(0);
             isWin = gamePlay(strGuessWord);
-            // win - not win
-            if (isWin) {                                                  // если слово угадано победа, если виселица построенна - поражение.
+            if (isWin) {
                 System.out.println("Это победа ! Вы выйграли !!!");
             } else {
                 System.out.println("Вы проиграли ...");
                 System.out.println("Загаданное слово : " + strGuessWord);
             }
-
-            System.out.println("      -= Игра окончена =- ");                     // блок предложения сыграть снова?
+            System.out.println("      -= Игра окончена =- ");
             System.out.println(" -= Но можно сыграть снова =- ");
+            }
         }
 
-
-
-        // offerGame
-        // gamingLoop
-
-    }
-
     public static ArrayList<String> readWordsFromFile () {
-        // инициализация переменных
-        int iCountLines = 0;
+        int iCountLines = 0;                                                // инициализация переменных
         int iLenghtWord = 5;
         String sWorkDir = "src";
         String sWordsDictionary = "WordsDictionary.txt";
-
         char chTmp;
         String sTmpLine="а"; // temp var
         ArrayList<String> wordsDictionary4game = new ArrayList<>();
@@ -185,6 +180,7 @@ public class Main {
         chArrayGuessTheWord.removeAll( chArrayGuessTheWord );  //****         очистка коллекций после игрового раунда
         chArrayRresult.removeAll(chArrayRresult);
         chArrayWrongChars.removeAll(chArrayWrongChars);
+        System.gc();                                            // Уборка мусора
         return isWin;
     }
 
