@@ -6,20 +6,29 @@ import java.util.*;
  * Created by Me on 12.12.2023.
  */
 public class Main {
-   private static Scanner cReadFromKeyboard = new Scanner(System.in);
-
-
+    private static Scanner cReadFromKeyboard = new Scanner(System.in);
     public static void main(String[] args) {
-        ArrayList<String> wordsDictionary4game = new ArrayList<>();
+        ArrayList<String> wordsDictionary4game = new ArrayList<>(); // collection of  words
+        boolean isWin = false;
 
+        while (inviteGame()) {
+            //     System.out.println("Hello!");
+            wordsDictionary4game = readWordsFromFile();
+            String strGuessWord = guessTheWord(wordsDictionary4game);        // Загаданное слово...
+            //System.out.println(strGuessWord);
+            // printHangman(0);
+            isWin = gamePlay(strGuessWord);
+            // win - not win
+            if (isWin) {                                                  // если слово угадано победа, если виселица построенна - поражение.
+                System.out.println("Это победа ! Вы выйграли !!!");
+            } else {
+                System.out.println("Вы проиграли ...");
+                System.out.println("Загаданное слово : " + strGuessWord);
+            }
 
-        inviteGame();
-   //     System.out.println("Hello!");
-        wordsDictionary4game= readWordsFromFile();
-        String strGuessWord= guessTheWord(wordsDictionary4game);        // Загаданное слово...
-        //System.out.println(strGuessWord);
-       // printHangman(0);
-        gamePlay(strGuessWord);
+            System.out.println("      -= Игра окончена =- ");                     // блок предложения сыграть снова?
+            System.out.println(" -= Но можно сыграть снова =- ");
+        }
 
 
 
@@ -74,7 +83,8 @@ public class Main {
         }
         return wordsDictionary4game;
     }
-    public static void inviteGame() {
+    public static boolean inviteGame() {
+        boolean isGaming = false;
         String strngTemp;
         char cKeyControl = 2;
         System.out.println("Игра - Виселица");                                    // начальное приветсвие и предложение игры
@@ -85,17 +95,19 @@ public class Main {
             switch (cKeyControl) {
                 case '1':
                     System.out.println();  // "Game"
+                    isGaming = true;
                     break;
                 case '2':
-                    System.out.println("Goodbuy !");
+                    System.out.println("Работа программы завершена. До свидания!");
                     cReadFromKeyboard.close();
                     System.exit(0);
                     break;
                 default:
-                    System.out.printf("Error! Please enter 1 or 2 введено %strngTemp", cKeyControl);
+                    System.out.printf("Ошибка! Пожалуйста введите 1 или 2 введено %strngTemp", cKeyControl);
                     System.out.println("");
             }
         }
+        return isGaming;
     }
     public static String guessTheWord(ArrayList<String> wordsDictionary4game) {
 
@@ -122,10 +134,8 @@ public class Main {
         int iError = 0;
         boolean isCharHere;
         boolean isWin = false;
-
-        char[] cGuessTheWord = stGuessWord.toCharArray();
-        for (char c : cGuessTheWord) {                                       // слово в коллекцию букв
-            chArrayGuessTheWord.add(c);
+        for (int i = 0; i <stGuessWord.length() ; i++) {                // слово в коллекцию букв
+            chArrayGuessTheWord.add(stGuessWord.charAt(i));
             chArrayRresult.add('_');                                         // коллекцию для отгаданных букв заполнить _ подчёркиванием
         }
         System.out.println("Загаданное слово...");
@@ -151,27 +161,28 @@ public class Main {
                 System.out.print(chArrayRresult.get(i) + " ");              // напечатать угаданные буквы
             }
             /** варианты:  1 буква в слове есть - поместить в массив угаданных
-            *              2 буквы в слове нет - а) буква введена первый раз - зачитываю ошибку
-            *                                    б) буква введена повторно - напомнить, что буква уже введена, нет ошибки
-            */
+             *              2 буквы в слове нет - а) буква введена первый раз - зачитываю ошибку
+             *                                    б) буква введена повторно - напомнить, что буква уже введена, нет ошибки
+             */
             if (isCharHere == false) {
-                if ( chArrayWrongChars.add(cKey) ) {
+                if (chArrayWrongChars.add(cKey)) {
                     iError++;                                              // буквы нет, плюсую ошибку
                 } else {
                     System.out.println("\n Такую букву вы уже вводили и ее нет в слове");
                 }
-
-            }
-            System.out.println("Ошибки (" + iError + "):" + chArrayWrongChars);
-            printHangman(iError);
-            if (  !chArrayRresult.contains('_') ) {                   // слово отгаданно, если нет символов подчёркивания
-                isWin = true;
-                break;
+                System.out.println("Ошибки (" + iError + "):" + chArrayWrongChars);
+                printHangman(iError);
+                if (!chArrayRresult.contains('_')) {                   // слово отгаданно, если нет символов подчёркивания
+                    isWin = true;
+                    break;
+                }
             }
         } // end While
+        chArrayGuessTheWord.removeAll( chArrayGuessTheWord );  //****         очистка коллекций после игрового раунда
+        chArrayRresult.removeAll(chArrayRresult);
+        chArrayWrongChars.removeAll(chArrayWrongChars);
         return isWin;
     }
-
 
     public static void printHangman(int iError) {
         String sGallow1 = " ____";
@@ -195,18 +206,25 @@ public class Main {
                 sGallow3 = " |  o";
                 break;
             case 2:
+                sGallow3 = " |  o";
                 sGallow4 = " |  |";
                 break;
             case 3:
+                sGallow3 = " |  o";
                 sGallow4 = " | /|";
                 break;
             case 4:
+                sGallow3 = " |  o";
                 sGallow4 = " | /|\\";
                 break;
             case 5:
+                sGallow3 = " |  o";
+                sGallow4 = " | /|\\";
                 sGallow5 = " | /`";
                 break;
             case 6:
+                sGallow3 = " |  o";
+                sGallow4 = " | /|\\";
                 sGallow5 = " | /`\\";
                 break;
             default:
@@ -221,11 +239,6 @@ public class Main {
         System.out.println(sGallow6);
         System.out.println(sGallow7);
         System.out.println();
-
-
-
-
-
     }
 
     public static char getChar() {
@@ -240,6 +253,9 @@ public class Main {
         cKey = strTmp.charAt(0);
         return cKey;
     }
+
+
+
 
 
 }   //end Main
