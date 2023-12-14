@@ -6,17 +6,20 @@ import java.util.*;
  * Created by Me on 12.12.2023.
  */
 public class Main {
+   private static Scanner cReadFromKeyboard = new Scanner(System.in);
+
+
     public static void main(String[] args) {
         ArrayList<String> wordsDictionary4game = new ArrayList<>();
 
-        Set<Character> chArrayWrongChars = new LinkedHashSet<>();       // массив для неправ.введённых букв
-      //  inviteGame();
-   //     System.out.println("Hello!");
 
+        inviteGame();
+   //     System.out.println("Hello!");
         wordsDictionary4game= readWordsFromFile();
         String strGuessWord= guessTheWord(wordsDictionary4game);        // Загаданное слово...
-        System.out.println(strGuessWord);
-        printGallow(7);
+        //System.out.println(strGuessWord);
+       // printHangman(0);
+        gamePlay(strGuessWord);
 
 
 
@@ -76,7 +79,6 @@ public class Main {
         char cKeyControl = 2;
         System.out.println("Игра - Виселица");                                    // начальное приветсвие и предложение игры
         System.out.println("Начать игру нажмите 1 / Для Выхода нажмите 2");
-        Scanner cReadFromKeyboard = new Scanner(System.in);
         while (cKeyControl != '1') {
             strngTemp = cReadFromKeyboard.nextLine();
             cKeyControl = strngTemp.charAt(0);
@@ -116,7 +118,11 @@ public class Main {
     public static boolean gamePlay(String stGuessWord) {
         List<Character> chArrayGuessTheWord = new ArrayList<>();        // массив для загаданного слова
         List<Character> chArrayRresult = new ArrayList<>();             // массив для отгаданных букв
+        Set<Character> chArrayWrongChars = new LinkedHashSet<>();       // массив для неправ.введённых букв
+        int iError = 0;
+        boolean isCharHere;
         boolean isWin = false;
+
         char[] cGuessTheWord = stGuessWord.toCharArray();
         for (char c : cGuessTheWord) {                                       // слово в коллекцию букв
             chArrayGuessTheWord.add(c);
@@ -130,20 +136,11 @@ public class Main {
         /*******************
          Игровой цикл
          *******************/
-       /* Gallow gGame1 = new Gallow();                                       // инициализация виселицы
-        gGame1.GallowPrint();                                               // печать виселицы
-        int iError = 0;
-        boolean isCharHere;
-        boolean isWin = false;
+        printHangman(iError); // печать виселицы
+        char cKey;
         while (iError < 6) {                                                // играем до 6 ошибок
             isCharHere = false;
-            do {
-                System.out.print("Введите одну русскую букву: ");
-                s = cReadFromKeyboard.nextLine();
-                s = s.toLowerCase();
-            }
-            while (!s.matches("[а-я]"));                      // Выполнить проверку на принадлежность диапазона ru букв
-            cKey = s.charAt(0);
+            cKey= getChar();
             System.out.println();
             System.out.println("Загаданное слово...");
             for (int i = 0; i < chArrayGuessTheWord.size(); i++) {          // сравнение посимвольно загаданного слова
@@ -152,23 +149,31 @@ public class Main {
                     isCharHere = true;
                 }
                 System.out.print(chArrayRresult.get(i) + " ");              // напечатать угаданные буквы
-            }*/
+            }
+            /** варианты:  1 буква в слове есть - поместить в массив угаданных
+            *              2 буквы в слове нет - а) буква введена первый раз - зачитываю ошибку
+            *                                    б) буква введена повторно - напомнить, что буква уже введена, нет ошибки
+            */
+            if (isCharHere == false) {
+                if ( chArrayWrongChars.add(cKey) ) {
+                    iError++;                                              // буквы нет, плюсую ошибку
+                } else {
+                    System.out.println("\n Такую букву вы уже вводили и ее нет в слове");
+                }
 
-
-
-
-
-
-
-
-
-
-
-            return isWin;
+            }
+            System.out.println("Ошибки (" + iError + "):" + chArrayWrongChars);
+            printHangman(iError);
+            if (  !chArrayRresult.contains('_') ) {                   // слово отгаданно, если нет символов подчёркивания
+                isWin = true;
+                break;
+            }
+        } // end While
+        return isWin;
     }
 
 
-    public static void printGallow(int iError) {
+    public static void printHangman(int iError) {
         String sGallow1 = " ____";
         String sGallow2 = " |  |";
 //    String sGallow3 = " |  o";
@@ -221,6 +226,19 @@ public class Main {
 
 
 
+    }
+
+    public static char getChar() {
+        char cKey = 2;
+        String strTmp;
+        do {
+            System.out.print("Введите одну русскую букву: ");
+            strTmp = cReadFromKeyboard.nextLine();
+            strTmp = strTmp.toLowerCase();
+        }
+        while (!strTmp.matches("[а-я]"));                      // Выполнить проверку на принадлежность диапазона ru букв
+        cKey = strTmp.charAt(0);
+        return cKey;
     }
 
 
