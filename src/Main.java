@@ -9,8 +9,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        inviteGame();
-        System.out.println("Hello!");
+       // inviteGame();
+   //     System.out.println("Hello!");
 
         readWordsFromFile();
 
@@ -21,29 +21,50 @@ public class Main {
     }
 
     public static void readWordsFromFile () {
+        // инициализация переменных
+        int iCountLines = 0;
+        int iLenghtWord = 5;
+        String sWorkDir = "src";
+        String sWordsDictionary = "WordsDictionary.txt";
+
+        char chTmp;
+        String sTmpLine="а"; // temp var
         ArrayList<String> wordsDictionary4game = new ArrayList<>();
         try {
-            File file = new File(String.valueOf(Paths.get("src", "WordsDictionary.txt").toFile()));
+            File file = new File(String.valueOf(Paths.get(sWorkDir, sWordsDictionary).toFile()));
             FileReader fr = new FileReader(file);
             BufferedReader reader = new BufferedReader(fr);
-            // считаем сначала первую строку
-            String line = reader.readLine();
-            while (line != null) {
-                wordsDictionary4game.add(line);
-                System.out.println(line);
-                // считываем остальные строки в цикле
-                line= reader.readLine();
+ labelOne:  while ((sTmpLine = reader.readLine()) != null) {           // считываем строки в цикле
+                sTmpLine= sTmpLine.toLowerCase();
+                if ( sTmpLine.length() < iLenghtWord ) continue;     // обработка слова (менее 5 букв отбросить)
+
+                for (int i = 0; i < sTmpLine.length(); i++) {       // проверка - слово содержит только русские буквы ?
+                    chTmp = sTmpLine.charAt(i);
+                    if (!(chTmp >= 'а' && chTmp <= 'я')) {
+                        if (chTmp == 'ё') { continue; }
+                        else {                                       //слово с символами не входящими в русский алфавит отбрасывать
+                            System.out.println("Слово: " + sTmpLine + " содержит недопустимые символы и было отброшено ");
+                            continue labelOne;
+                        }
+                    }
+                }
+                wordsDictionary4game.add(sTmpLine);
+                System.out.println(sTmpLine);
             }
+        reader.close();
+        fr.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
+        // обработка файла с малым количеством слов < 5
+        if (wordsDictionary4game.size() <= 5) {                     // обработка файла с малым количеством слов < 5
+            System.out.println("Файла словаря" + sWordsDictionary + " было загружено менее 6 слов. Для работы программы необходимо больше слов");
+            System.out.println("Работа программы завершена");
+            System.exit(0);
+        }
     }
-
-
     public static void inviteGame() {
         String strngTemp;
         char cKeyControl = 2;
