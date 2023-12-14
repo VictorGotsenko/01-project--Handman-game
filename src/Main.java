@@ -10,8 +10,9 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<String> wordsDictionary4game = new ArrayList<>(); // collection of  words
         boolean isWin = false;
-
+        System.out.println(" Добро пожаловать в игру Виселица");
         while (inviteGame()) {
+            isWin = false;
             //     System.out.println("Hello!");
             wordsDictionary4game = readWordsFromFile();
             String strGuessWord = guessTheWord(wordsDictionary4game);        // Загаданное слово...
@@ -87,7 +88,6 @@ public class Main {
         boolean isGaming = false;
         String strngTemp;
         char cKeyControl = 2;
-        System.out.println("Игра - Виселица");                                    // начальное приветсвие и предложение игры
         System.out.println("Начать игру нажмите 1 / Для Выхода нажмите 2");
         while (cKeyControl != '1') {
             strngTemp = cReadFromKeyboard.nextLine();
@@ -131,12 +131,13 @@ public class Main {
         List<Character> chArrayGuessTheWord = new ArrayList<>();        // массив для загаданного слова
         List<Character> chArrayRresult = new ArrayList<>();             // массив для отгаданных букв
         Set<Character> chArrayWrongChars = new LinkedHashSet<>();       // массив для неправ.введённых букв
+        char chMask = '_';                                              // маска закрывающая буквы
         int iError = 0;
         boolean isCharHere;
         boolean isWin = false;
         for (int i = 0; i <stGuessWord.length() ; i++) {                // слово в коллекцию букв
             chArrayGuessTheWord.add(stGuessWord.charAt(i));
-            chArrayRresult.add('_');                                         // коллекцию для отгаданных букв заполнить _ подчёркиванием
+            chArrayRresult.add(chMask);                                 // коллекцию для отгаданных букв заполнить маской
         }
         System.out.println("Загаданное слово...");
         for (int i = 0; i < chArrayRresult.size(); i++) {                    // вывод коллекции _ _ _ _
@@ -152,6 +153,7 @@ public class Main {
             isCharHere = false;
             cKey= getChar();
             System.out.println();
+
             System.out.println("Загаданное слово...");
             for (int i = 0; i < chArrayGuessTheWord.size(); i++) {          // сравнение посимвольно загаданного слова
                 if (cKey == chArrayGuessTheWord.get(i)) {
@@ -160,6 +162,7 @@ public class Main {
                 }
                 System.out.print(chArrayRresult.get(i) + " ");              // напечатать угаданные буквы
             }
+            System.out.println();
             /** варианты:  1 буква в слове есть - поместить в массив угаданных
              *              2 буквы в слове нет - а) буква введена первый раз - зачитываю ошибку
              *                                    б) буква введена повторно - напомнить, что буква уже введена, нет ошибки
@@ -168,14 +171,15 @@ public class Main {
                 if (chArrayWrongChars.add(cKey)) {
                     iError++;                                              // буквы нет, плюсую ошибку
                 } else {
-                    System.out.println("\n Такую букву вы уже вводили и ее нет в слове");
+                    System.out.println("\nТакую букву вы уже вводили и ее нет в слове");
                 }
-                System.out.println("Ошибки (" + iError + "):" + chArrayWrongChars);
-                printHangman(iError);
-                if (!chArrayRresult.contains('_')) {                   // слово отгаданно, если нет символов подчёркивания
-                    isWin = true;
-                    break;
-                }
+            }
+            System.out.println("Ошибки (" + iError + "):" + chArrayWrongChars);
+            System.out.println("");
+            printHangman(iError);
+            if (!chArrayRresult.contains(chMask)) {                   // слово отгаданно, если нет символов маски
+                isWin = true;
+                break;
             }
         } // end While
         chArrayGuessTheWord.removeAll( chArrayGuessTheWord );  //****         очистка коллекций после игрового раунда
