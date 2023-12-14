@@ -1,18 +1,21 @@
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by Me on 12.12.2023.
  */
 public class Main {
     public static void main(String[] args) {
-
-       // inviteGame();
+        ArrayList<String> wordsDictionary4game = new ArrayList<>();
+        Set<Character> chArrayWrongChars = new LinkedHashSet<>();       // массив для неправ.введённых букв
+      //  inviteGame();
    //     System.out.println("Hello!");
 
-        readWordsFromFile();
+        wordsDictionary4game= readWordsFromFile();
+       String strGuessWord= guessTheWord(wordsDictionary4game);
+        System.out.println(strGuessWord);
+
 
 
         // offerGame
@@ -20,7 +23,7 @@ public class Main {
 
     }
 
-    public static void readWordsFromFile () {
+    public static ArrayList<String> readWordsFromFile () {
         // инициализация переменных
         int iCountLines = 0;
         int iLenghtWord = 5;
@@ -49,7 +52,7 @@ public class Main {
                     }
                 }
                 wordsDictionary4game.add(sTmpLine);
-                System.out.println(sTmpLine);
+            //    System.out.println(sTmpLine);
             }
         reader.close();
         fr.close();
@@ -64,6 +67,7 @@ public class Main {
             System.out.println("Работа программы завершена");
             System.exit(0);
         }
+        return wordsDictionary4game;
     }
     public static void inviteGame() {
         String strngTemp;
@@ -89,7 +93,26 @@ public class Main {
             }
         }
     }
+    public static String guessTheWord(ArrayList<String> wordsDictionary4game) {
+       /*
+        List<Character> chArrayGuessTheWord = new ArrayList<>();        // массив для загаданного слова
+        List<Character> chArrayRresult = new ArrayList<>();             // массив для отгаданных букв
+       */
+        Random numRnd = new Random();
+        int iNumRnd = numRnd.nextInt(wordsDictionary4game.size());      // random int
+        String sGuessTheWord = wordsDictionary4game.get(iNumRnd);
 
+       /*// chArrayGuessTheWord = sTmp.toCharArray();
+       // String sGuessTheWord = GuessTheWord.RndWord(iNumLine);                // Загадать слово
+        char[] cGuessTheWord = sGuessTheWord.toCharArray();
+        for (char c : cGuessTheWord) {                                       // слово в коллекцию букв
+            chArrayGuessTheWord.add(c);
+            chArrayRresult.add('_');                                         // коллекцию для отгаданных букв заполнить _ подчёркиванием
+        }
+       // return chArrayGuessTheWord, chArrayRresult;
+*/
+        return sGuessTheWord;
+    }
 
 
 
