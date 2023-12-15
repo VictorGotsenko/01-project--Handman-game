@@ -100,7 +100,7 @@ public class Main {
                     System.exit(0);
                     break;
                 default:
-                    System.out.printf("Ошибка! Пожалуйста введите 1 или 2 введено %strngTemp", cKeyControl);
+                    System.out.printf("Ошибка! Пожалуйста введите 1 или 2 , а было введено: %s", cKeyControl);
                     System.out.println("");
             }
         }
