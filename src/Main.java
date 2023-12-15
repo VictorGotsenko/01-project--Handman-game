@@ -137,7 +137,7 @@ public class Main {
          *******************/
         printHangman(iError); // печать виселицы
         char cKey;
-        while (iError < 6) {                                                                                             // играем до 6 ошибок
+        while (iError < 6) {                                                                                            // играем до 6 ошибок
             isCharHere = false;
             cKey = getChar();
             System.out.println();
