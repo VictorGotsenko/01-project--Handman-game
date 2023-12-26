@@ -18,11 +18,14 @@ public class Main {
     private static Scanner cReadFromKeyboard = new Scanner(System.in);
 
     public static void main(String[] args) {
-        ArrayList<String> wordsDictionary4game = new ArrayList<>();                                                     // collection of  words
+
+        ArrayList<String> wordsRawDictionary;                                                                           // Raw  collection of words
+        ArrayList<String> wordsDictionary4game;                                                                         // clear collection of words
         boolean isWin = false;
         System.out.println(" Добро пожаловать в игру Виселица");
         while (inviteGame()) {
-            wordsDictionary4game = readWordsFromFile();
+            wordsRawDictionary = readWordsFromFile();                                                                   // read all words from file
+            wordsDictionary4game = wordsFiltering(wordsRawDictionary);                                                  // filtering list of words
             String strGuessWord = guessTheWord(wordsDictionary4game);                                                   // Загаданное слово...
             isWin = gamePlay(strGuessWord);
             if (isWin) {
@@ -37,34 +40,17 @@ public class Main {
     }
 
     public static ArrayList<String> readWordsFromFile() {
-        int iLenghtWordMax = 10;                                                                                        // максимальная длинна слова
-        int iLenghtWordMin = 5;                                                                                         // минимальная
         String sWorkDir = "src";
         String sWordsDictionary = "WordsDictionary.txt";
-        char chTmp;
         String sTmpString = "а";                                                                                         // temp var
-        ArrayList<String> wordsDictionary4game = new ArrayList<>();
+        ArrayList<String> wordsRawDictionary = new ArrayList<>();
         try {
             File file = new File(String.valueOf(Paths.get(sWorkDir, sWordsDictionary).toFile()));
             FileReader fr = new FileReader(file);
             BufferedReader reader = new BufferedReader(fr);
-            labelOne:
             while ((sTmpString = reader.readLine()) != null) {                                                          // считываем строки в цикле
                 sTmpString = sTmpString.toLowerCase();
-                if ((sTmpString.length() < iLenghtWordMin) || (sTmpString.length() > iLenghtWordMax))
-                    continue;                                                                                           // обработка слова (менее 5 или более 10  букв отбросить)
-                for (int i = 0; i < sTmpString.length(); i++) {                                                         // проверка - слово содержит только русские буквы ?
-                    chTmp = sTmpString.charAt(i);
-                    if (!(chTmp >= 'а' && chTmp <= 'я')) {
-                        if (chTmp == 'ё') {
-                            continue;
-                        } else {                                                                                        //слово с символами не входящими в русский алфавит отбрасывать
-                            System.out.println("Слово: " + sTmpString + " содержит недопустимые символы и было отброшено ");
-                            continue labelOne;
-                        }
-                    }
-                }
-                wordsDictionary4game.add(sTmpString);
+                wordsRawDictionary.add(sTmpString);
             }
             reader.close();
             fr.close();
@@ -73,12 +59,39 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (wordsDictionary4game.size() <= 5) {                                                                         // обработка файла с малым количеством слов < 5
-            System.out.println("Файла словаря" + sWordsDictionary + " было загружено менее 6 слов. Для работы программы необходимо больше слов");
+        return wordsRawDictionary;
+    }
+                                                                                                                        //*** фильтрую словарь
+    public static ArrayList<String> wordsFiltering (ArrayList<String> wordsRawDictionary) {
+        int iLenghtWordMax = 10;                                                                                        // максимальная длинна слова
+        int iLenghtWordMin = 5;                                                                                         // минимальная
+        char chTmp;
+        ArrayList<String> wordsFilteringDictionary = new ArrayList<>();
+
+labelOne: for (String sTmpString : wordsRawDictionary) {
+         if ((sTmpString.length() < iLenghtWordMin) || (sTmpString.length() > iLenghtWordMax)) {                        // обработка слова (менее 5 или более 10  букв отбросить)*/
+             System.out.println("Слово: "+sTmpString+" - не подходит под диапазон от 5 до 10 букв. И было исключено из словаря.");
+             continue;
+         }
+             for (int i = 0; i < sTmpString.length(); i++) {                                                            // проверка - слово содержит только русские буквы ?
+                chTmp = sTmpString.charAt(i);
+                if (!(chTmp >= 'а' && chTmp <= 'я')) {
+                    if (chTmp == 'ё') {
+                        continue;
+                    } else {                                                                                            //слово с символами не входящими в русский алфавит отбрасывать
+                        System.out.println("Слово: " + sTmpString + " содержит недопустимые символы и было отброшено ");
+                        continue labelOne;
+                    }
+                }
+            }
+            wordsFilteringDictionary.add(sTmpString);
+        }
+        if (wordsRawDictionary.size() <= 5) {                                                                         // обработка файла с малым количеством слов < 5
+            System.out.println("Файла словаря содержит менее 6 слов. Для работы программы необходимо больше слов");
             System.out.println("Работа программы завершена");
             System.exit(0);
         }
-        return wordsDictionary4game;
+        return wordsFilteringDictionary;
     }
 
     public static boolean inviteGame() {
@@ -91,7 +104,7 @@ public class Main {
             cKeyControl = strngTemp.charAt(0);
             switch (cKeyControl) {
                 case '1':
-                    System.out.println();  // "Game"
+                    System.out.println();                                                                               // "Game"
                     isGaming = true;
                     break;
                 case '2':
